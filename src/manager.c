@@ -103,7 +103,7 @@ void systemProcess(void) {
 }
 
 void systemShutDown(void) {
-     person_list_free(personList);
+     person_list_free(&personList);
 }
 
 // -----------------------------------------------------------------------------
@@ -126,9 +126,9 @@ void systemShowMainMenu(void) {
 
 void systemMenuCreate(void) {
      systemCleanConsole();
-     printf(" =============================================\n");
-     printf(" \t\t ADD PERSON\n");
-     printf(" =============================================\n");
+     printf("=============================================\n");
+     printf("\t\t ADD PERSON\n");
+     printf("=============================================\n\n");
 
      char firstName[100];
      if(!systemGetFirstName(firstName)) return;
@@ -151,9 +151,9 @@ void systemMenuCreate(void) {
 
 void systemMenuRemove(void) {
      systemCleanConsole();
-     printf(" =============================================\n");
-     printf(" \t\t DELETE PERSON\n");
-     printf(" =============================================\n");
+     printf("=============================================\n");
+     printf("\t\t DELETE PERSON\n");
+     printf("=============================================\n\n");
 
      int id = 0;
      if(!systemGetId(&id)) return;
@@ -166,20 +166,22 @@ void systemMenuRemove(void) {
 
 void systemMenuList(void) {
      systemCleanConsole();
-     printf(" =============================================\n");
-     printf(" \t\t LIST PERSON\n");
-     printf(" =============================================\n");
+     printf("=============================================\n");
+     printf("\t\t LIST PERSON\n");
+     printf("=============================================\n\n");
 
-     person_list_print(personList);
+     if(person_list_print(personList) == 0) {
+          printf("There are no persons registered!\n\n");
+     }
 
      systemWaitEnter();  
 }
 
 void systemMenuUpdate(void) {
      systemCleanConsole();
-     printf(" =============================================\n");
-     printf(" \t\t UPDATE PERSON\n");
-     printf(" =============================================\n");
+     printf("=============================================\n");
+     printf("\t\t UPDATE PERSON\n");
+     printf("=============================================\n\n");
 
      int id = 0;
      if(!systemGetId(&id)) return;
@@ -189,9 +191,9 @@ void systemMenuUpdate(void) {
      int option = -1;
      while(option != 0) {
           systemCleanConsole();
-          printf(" =============================================\n");
-          printf(" \t\t UPDATE PERSON\n");
-          printf(" =============================================\n");
+          printf("=============================================\n");
+          printf("\t\t UPDATE PERSON\n");
+          printf("=============================================\n\n");
           puts("Choose a field to update (enter 0 to RETURN):");
           puts("1) FIRST NAME");
           puts("2) SECOND NAME");
@@ -250,9 +252,9 @@ void systemMenuLoadBackup(void) {
      char filePath[200];
      while(true) {
           systemCleanConsole();
-          printf(" =============================================\n");
-          printf(" \t\t LOAD BACKUP\n");
-          printf(" =============================================\n");
+          printf("=============================================\n");
+          printf("\t\t LOAD BACKUP\n");
+          printf("=============================================\n\n");
           if(!systemGetFilePath(filePath)) return;
           if(systemLoadBackup(filePath)) break;
      }
@@ -265,9 +267,9 @@ void systemMenuSaveBackup(void) {
      char filePath[200];
      while(true) {
           systemCleanConsole();
-          printf(" =============================================\n");
-          printf(" \t\t SAVE BACKUP\n");
-          printf(" =============================================\n");
+          printf("=============================================\n");
+          printf("\t\t SAVE BACKUP\n");
+          printf("=============================================\n\n");
           if(!systemGetFilePath(filePath)) return;
           if(systemSaveBackup(filePath)) break;
      }
@@ -301,7 +303,7 @@ bool systemLoadBackup(char *filepath) {
      }
 
      if(personList != NULL) {
-          person_list_free(personList);
+          person_list_free(&personList);
           personList = person_list_init();
      }
 
@@ -438,7 +440,7 @@ bool systemGetFilePath(char *filePath) {
           scanf("%200s", filePath);
           systemClearBuffer();
           if(strcmp(filePath, "Q") == 0) {
-               return false;;     
+               return false;     
           }
           if(strlen(filePath)) {
                return true;

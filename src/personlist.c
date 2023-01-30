@@ -17,7 +17,7 @@ PersonList* person_list_init(void) {
      return personList;
 }
 
-size_t person_list_size(PersonList* list) {
+size_t person_list_size(const PersonList* list) {
      size_t listSize = 0;
      PersonListNode* iterator = NULL;
      LIST_FOREACH(iterator, list, links) {
@@ -26,7 +26,7 @@ size_t person_list_size(PersonList* list) {
      return listSize;
 }
 
-Person* person_list_get(PersonList* list, int index) {
+Person* person_list_get(const PersonList* list, int index) {
      if (!list || index < 0) {
           return NULL;
      }
@@ -40,11 +40,11 @@ Person* person_list_get(PersonList* list, int index) {
      return (iterator)? iterator->person : NULL;
 }
 
-int person_list_find(PersonList* list, Person* person) {
+int person_list_find(const PersonList* list, const Person* person) {
      if (!list) {
           return -1;
      }
-     size_t index = -1;
+     int index = -1;
      bool searchStatus = false;
      PersonListNode* iterator = NULL;
      LIST_FOREACH(iterator, list, links) {
@@ -57,11 +57,11 @@ int person_list_find(PersonList* list, Person* person) {
      return (searchStatus) ? index : -1;
 }
 
-int person_list_find_if_index(PersonList* list, bool (*condition)(Person*)) {
+int person_list_find_if_index(const PersonList* list, const bool (*condition)(Person*)) {
      if (!list || !condition) {
           return -1;
      }
-     size_t index = -1;
+     int index = -1;
      bool searchStatus = false;
      PersonListNode* iterator = NULL;
      LIST_FOREACH(iterator, list, links) {
@@ -74,7 +74,7 @@ int person_list_find_if_index(PersonList* list, bool (*condition)(Person*)) {
      return (searchStatus) ? index : -1;
 }
 
-Person* person_list_find_if(PersonList* list, bool (*condition)(Person*)) {
+Person* person_list_find_if(const PersonList* list, const bool (*condition)(Person*)) {
      if (!list || !condition) {
           return NULL;
      }
@@ -144,9 +144,9 @@ bool person_list_remove(PersonList* list, int index) {
      return false;
 }
 
-void person_list_print(PersonList* list) {
+size_t person_list_print(const PersonList* list) {
      if (!list) {
-          return;
+          return 0;
      }
      size_t index = 1;
      PersonListNode* iterator = NULL;
@@ -154,18 +154,22 @@ void person_list_print(PersonList* list) {
           printf("ID #%ld\n", index++);
           person_print(iterator->person);
      }
+     return index - 1;
 }
 
-void person_list_free(PersonList* list) {
-     if (!list) {
+void person_list_free(PersonList** list_ptr) {
+     if (!list_ptr || !(*list_ptr)) {
           return;
      }
+     PersonList* list = *list_ptr;
+
      PersonListNode* iterator = list->lh_first;
      while (iterator) {
           PersonListNode* currentNode = iterator;
-          person_free(currentNode->person);
+          person_free(&currentNode->person);
           iterator = iterator->links.le_next;
           free(currentNode);
      }
      free(list);
+     *list_ptr = NULL;
 }
