@@ -1,15 +1,34 @@
-TOOLCHAN := gcc
-FLAGS := -lm -Wall -Iinc
-MAIN_PROJECT := src/main.c 
-TEST_PROJECT := src/test.c 
-SOURCES := src/person.c src/personlist.c src/manager.c
-EXECUTABLE := build/personctrl
+FLAGS := -Wall -Iinc
 
-all: ${SOURCES}
-	@${TOOLCHAN} ${FLAGS} ${MAIN_PROJECT} ${SOURCES} -o ${EXECUTABLE}
+.PHONY: clean
 
-test: ${SOURCES}
-	@${TOOLCHAN} ${FLAGS} ${TEST_PROJECT} ${SOURCES} -o ${EXECUTABLE}
+all: build/ bin/ bin/personctrl
+
+test: build/ bin/ bin/tester
+
+bin/personctrl: build/main.o build/manager.o build/personlist.o build/person.o
+	${CC} ${FLAGS} $^ -o $@
+
+bin/tester: build/test.o build/manager.o build/personlist.o build/person.o
+	${CC} ${FLAGS} $^ -o $@
+
+build/main.o: src/main.c inc/manager.h
+	${CC} ${FLAGS} -c $< -o $@
+
+build/test.o: src/test.c inc/person.h inc/personlist.h
+	${CC} ${FLAGS} -c $< -o $@
+
+build/manager.o: src/manager.c inc/manager.h inc/person.h inc/personlist.h
+	${CC} ${FLAGS} -c $< -o $@
+
+build/personlist.o: src/personlist.c inc/personlist.h inc/person.h 
+	${CC} ${FLAGS} -c $< -o $@
+
+build/%.o: src/%.c inc/%.h
+	${CC} ${FLAGS} -c $< -o $@
 
 clean:
-	@rm -rf ${EXECUTABLE}
+	rm -rf bin/* build/*
+
+%/:
+	mkdir -p $@
